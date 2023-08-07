@@ -2,16 +2,18 @@ import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { resolvePtr } from "dns";
+import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
-const instructionMessage: ChatCompletionRequestMessage ={
-  role:"system",
-  content: "You are a code generator. You must answeronly in markdown code snippets.Use code comments for explanations"
-}
+const instructionMessage: ChatCompletionRequestMessage = {
+  role: "system",
+  content:
+    "You are a code generator. You must answeronly in markdown code snippets.Use code comments for explanations",
+};
 
 export async function POST(req: Request) {
   try {
@@ -31,15 +33,21 @@ export async function POST(req: Request) {
       return new NextResponse("Messages are required", { status: 400 });
     }
 
+    const freeTrial = await checkApiLimit();
+
+    if (!freeTrial) {
+      return new NextResponse("Free trial has expired", { status: 403 });
+    }
+
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages:[instructionMessage,...messages],
+      messages: [instructionMessage, ...messages],
     });
 
+    await increaseApiLimit();
+
     return NextResponse.json(response.data.choices[0].message);
-  } 
-  
-  catch (error) {
+  } catch (error) {
     console.log("[CODE_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }

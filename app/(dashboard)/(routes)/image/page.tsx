@@ -16,7 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ImagePage = () => {
   const router = useRouter();
@@ -27,8 +33,8 @@ const ImagePage = () => {
     defaultValues: {
       prompt: "",
       amount: "1",
-      resolution: "512x512"
-    }
+      resolution: "512x512",
+    },
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -37,7 +43,7 @@ const ImagePage = () => {
     try {
       setImages([]);
 
-      const response = await axios.post('/api/image', values);
+      const response = await axios.post("/api/image", values);
 
       const urls = response.data.map((image: { url: string }) => image.url);
 
@@ -48,9 +54,9 @@ const ImagePage = () => {
     } finally {
       router.refresh();
     }
-  }
+  };
 
-  return ( 
+  return (
     <div>
       <Heading
         title="Image Generation"
@@ -61,8 +67,8 @@ const ImagePage = () => {
       />
       <div className="px-4 lg:px-8">
         <Form {...form}>
-          <form 
-            onSubmit={form.handleSubmit(onSubmit)} 
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
             className="
               rounded-lg 
               border 
@@ -83,8 +89,8 @@ const ImagePage = () => {
                   <FormControl className="m-0 p-0">
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                      disabled={isLoading} 
-                      placeholder="A picture of a horse in Swiss alps" 
+                      disabled={isLoading}
+                      placeholder="A picture of a horse in Swiss alps"
                       {...field}
                     />
                   </FormControl>
@@ -96,10 +102,10 @@ const ImagePage = () => {
               name="amount"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
-                  <Select 
-                    disabled={isLoading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -109,10 +115,7 @@ const ImagePage = () => {
                     </FormControl>
                     <SelectContent>
                       {amountOptions.map((option) => (
-                        <SelectItem 
-                          key={option.value} 
-                          value={option.value}
-                        >
+                        <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
                       ))}
@@ -126,10 +129,10 @@ const ImagePage = () => {
               name="resolution"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
-                  <Select 
-                    disabled={isLoading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -139,10 +142,7 @@ const ImagePage = () => {
                     </FormControl>
                     <SelectContent>
                       {resolutionOptions.map((option) => (
-                        <SelectItem 
-                          key={option.value} 
-                          value={option.value}
-                        >
+                        <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
                       ))}
@@ -151,7 +151,12 @@ const ImagePage = () => {
                 </FormItem>
               )}
             />
-            <Button className="col-span-12 lg:col-span-2 w-full" type="submit" disabled={isLoading} size="icon">
+            <Button
+              className="col-span-12 lg:col-span-2 w-full"
+              type="submit"
+              disabled={isLoading}
+              size="icon"
+            >
               Generate
             </Button>
           </form>
@@ -168,24 +173,24 @@ const ImagePage = () => {
           {Images.map((src) => (
             <Card key={src} className="rounded-lg overflow-hidden">
               <div className="relative aspect-square">
-                <Image
-                  fill
-                  alt="Generated"
-                  src={src}
-                />
+                <Image fill alt="Generated" src={src} />
               </div>
               <CardFooter className="p-2">
-                <Button onClick={() => window.open(src)} variant="secondary" className="w-full">
+                <Button
+                  onClick={() => window.open(src)}
+                  variant="secondary"
+                  className="w-full"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
-              </CardFooter> 
+              </CardFooter>
             </Card>
           ))}
         </div>
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default ImagePage;
