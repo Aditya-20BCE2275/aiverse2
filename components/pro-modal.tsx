@@ -1,6 +1,7 @@
 "use client";
 
-
+import axios from "axios";
+import { useState } from "react";
 import { useProModal } from "@/hooks/use-pro-modal";
 import {Dialog,DialogContent, DialogHeader,DialogTitle,DialogDescription, DialogFooter } from "./ui/dialog"
 import { Badge } from "./ui/badge";
@@ -50,6 +51,22 @@ const tools = [
   
 export const ProModal=()=>{
     const proModal=useProModal();
+    const [loading, setLoading] = useState(false);
+
+    const onSubscribe = async () => {
+        console.log("subscribing");
+        try {
+        setLoading(true);
+        const response = await axios.get("/api/stripe");
+
+        window.location.href = response.data.url;
+        } catch (error) {
+        console.log(error);
+        } finally {
+        setLoading(false);
+        }
+    }
+
     return(
         <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
             <DialogContent>
@@ -84,6 +101,8 @@ export const ProModal=()=>{
                 </DialogHeader>
                 <DialogFooter>
                     <Button
+                    disabled={loading}
+                    onClick={onSubscribe}
                     size="lg"
                     variant="premium"
                     className="w-full"
