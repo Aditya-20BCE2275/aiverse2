@@ -10,6 +10,7 @@ import { MessageSquare } from "lucide-react";
 import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { toast } from "react-hot-toast";
 
 const tools = [
     {
@@ -61,7 +62,7 @@ export const ProModal=()=>{
 
         window.location.href = response.data.url;
         } catch (error) {
-        console.log(error);
+        toast.error("Something went wrong");
         } finally {
         setLoading(false);
         }
