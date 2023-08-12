@@ -3,29 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const testimonials = [
   {
-    name: "Aditya",
-    avatar: "A",
+    name: "Ekjot",
+    avatar: "E",
     title: "Software Engineer",
-    description: "This is the best application I've used",
+    description: "A complete hub for all your AI needs at affordable prices",
   },
   {
     name: "Aditya",
     avatar: "A",
-    title: "Software Engineer",
-    description: "This is the best application I've used",
+    title: "Blockchain Developer",
+    description: "This is the best application I've used for understanding dense and highly coupled codes",
   },
   {
-    name: "Aditya",
+    name: "Arjun",
     avatar: "A",
-    title: "Software Engineer",
-    description: "This is the best application I've used",
+    title: "Data Scientist",
+    description: "One stop solution for all your problems",
   },
   {
-    name: "Aditya",
+    name: "Parth",
     avatar: "A",
-    title: "Software Engineer",
-    description: "This is the best application I've used"
-},
+    title: "Web Developer",
+    description: "Best Place for code debugging and generation",
+  },
 ];
 
 export const LandingContent = () => {
