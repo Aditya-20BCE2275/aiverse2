@@ -4,7 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-.env
 # testing
 /coverage
 
@@ -35,3 +34,8 @@ yarn-error.log*
 next-env.d.ts
 
 stripe.exe
+
+
+.env
+.env.local  
+.env.staging
