@@ -43,6 +43,7 @@ const ConversationPage = () => {
         role: "user",
         content: values.prompt,
       };
+      console.log(userMessage);
       const newMessages = [...messages, userMessage];
 
       const response = await axios.post("/api/conversation", {
