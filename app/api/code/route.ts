@@ -1,19 +1,12 @@
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { resolvePtr } from "dns";
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-const instructionMessage: ChatCompletionRequestMessage = {
+const instructionMessage = {
   role: "system",
   content:
-    "You are a code generator. You must answeronly in markdown code snippets.Use code comments for explanations",
+    "You are a code generator. You must answer in python language. Use code comments for explanations",
 };
 
 export async function POST(req: Request) {
@@ -23,11 +16,11 @@ export async function POST(req: Request) {
     const { messages } = body;
 
     if (!userId) {
-      new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!configuration.apiKey) {
-      return new NextResponse("OpenAI API Key not configured", { status: 500 });
+    if (!process.env.HUGGINGFACE_API_KEY) {
+      return new NextResponse("Hugging Face API Key not configured", { status: 500 });
     }
 
     if (!messages) {
@@ -41,14 +34,39 @@ export async function POST(req: Request) {
       return new NextResponse("Free trial has expired", {status:403});
     }
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [instructionMessage, ...messages],
+    const response = await fetch("https://api-inference.huggingface.co/models/Salesforce/codegen-350M-mono", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: [
+          ...messages.map(msg => msg.content),
+          instructionMessage.content
+        ].join("\n"),
+        options: {
+          use_cache: false,
+        },
+      }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text(); // Log the raw response text
+      console.error("Error Response Text:", errorText); // Log it for debugging
+      const errorData = await response.json();
+      console.error("Error details:", errorData);
+      return new NextResponse(`Hugging Face API error: ${errorData.error}`, { status: response.status });
+    }
+    const data = await response.json();
+    console.log(data);
+    
+    // Assuming the model returns the response in a standard format
+    const generatedMessage = data[0]?.generated_text || "No response generated.";
 
     if(!isPro) await increaseApiLimit();
 
-    return NextResponse.json(response.data.choices[0].message);
+    return NextResponse.json({ content: generatedMessage });
   } catch (error) {
     console.log("[CODE_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
