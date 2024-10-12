@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         inputs: [
-          ...messages.map(msg => msg.content),
+          ...messages.map((msg: { content: any; }) => msg.content),
           instructionMessage.content
         ].join("\n"),
         options: {
