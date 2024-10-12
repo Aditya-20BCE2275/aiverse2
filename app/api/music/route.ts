@@ -1,7 +1,5 @@
-// import { Configuration, OpenAIApi } from "openai";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { resolvePtr } from "dns";
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
 import Replicate from "replicate";
 import { checkSubscription } from "@/lib/subscription";
